@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // NOTE: You probably want to change this to another database later on
+  provider = "mysql"
+
+  // This value is read from the .env file.
+  url = env("DATABASE_URL")
+}
+
+enum TeacherTitle {
+  POSTDOC
+  ASSISTANT_PROFESSOR
+  LECTURER
+  ASSOCIATE_PROFESSOR
+  TENURED_PROFESSOR
+  PROFESSOR
+  ASSISTANT_RESEARCHER
+  TENURED_ASSOCIATE_RESEARCHER
+  ASSOCIATE_RESEARCHER
+  TENURED_RESEARCHER
+  RESEARCHER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model Teacher {
+  id               String             @id @default(cuid()) @db.Char(5)
+  name             String             @db.Char(255)
+  gender           Gender
+  title            TeacherTitle
+  TeacherOnPaper   TeacherOnPaper[]
+  TeacherOnProject TeacherOnProject[]
+  TeacherOnClass   TeacherOnClass[]
+}
+
+enum PaperType {
+  FULL
+  SHORT
+  POSTER
+  DEMO
+}
+
+enum PaperLevel {
+  CCF_A
+  CCF_B
+  CCF_C
+  Chinese_CCF_A
+  Chinese_CCF_B
+  None
+}
+
+model Paper {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.Char(255)
+  origin         String           @db.Char(255)
+  year           Int
+  type           PaperType
+  level          PaperLevel
+  TeacherOnPaper TeacherOnPaper[]
+}
+
+enum ProjectType {
+  NATIONAL
+  PROVINCIAL
+  MUNICIPAL
+  ENTERPRISE
+  OTHER
+}
+
+model Project {
+  id               String             @id @default(cuid()) @db.Char(255)
+  name             String             @db.Char(255)
+  origin           String             @db.Char(255)
+  type             ProjectType
+  total_fund       Float
+  start_year       Int
+  end_year         Int
+  TeacherOnProject TeacherOnProject[]
+}
+
+enum classType {
+  UNDERGRADUATE
+  MASTER
+}
+
+model Class {
+  id               String           @id @default(cuid()) @db.Char(255)
+  name             String           @db.Char(255)
+  type             classType
+  total_class_hour Int
+  TeacherOnClass   TeacherOnClass[]
+}
+
+model TeacherOnPaper {
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacherId String
+  paper     Paper   @relation(fields: [paperId], references: [id])
+  paperId   Int
+
+  rank                    Int
+  is_communicating_author Boolean
+
+  @@id([teacherId, paperId])
+}
+
+model TeacherOnProject {
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacherId String
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+
+  rank Int
+  fund Float
+
+  @@id([teacherId, projectId])
+}
+
+enum Term {
+  SPRING
+  SUMMER
+  AUTUMN
+}
+
+model TeacherOnClass {
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacherId String
+  class     Class   @relation(fields: [classId], references: [id])
+  classId   String
+
+  year       Int
+  term       Term
+  class_hour Int
+
+  @@id([teacherId, classId])
+}
+
+model Example {
+  id      String @id @default(uuid())
+  details String
+}
