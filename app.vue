@@ -1,6 +1,6 @@
 <template>
   <div>
-    <n-layout class="m-auto max-w-5xl">
+    <n-layout class="m-auto max-w-6xl">
       <n-layout-header>
         <Header />
       </n-layout-header>
@@ -10,3 +10,9 @@
     </n-layout>
   </div>
 </template>
+
+<script setup lang="ts">
+useHead({
+  title: '教务管理系统'
+})
+</script>
