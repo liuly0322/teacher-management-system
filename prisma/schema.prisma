@@ -140,10 +140,5 @@ model TeacherOnClass {
   term       Term
   class_hour Int
 
-  @@id([teacherId, classId])
-}
-
-model Example {
-  id      String @id @default(uuid())
-  details String
+  @@id([teacherId, classId, year, term])
 }
