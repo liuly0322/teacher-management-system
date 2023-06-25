@@ -26,7 +26,7 @@
           </template>
         </n-input-number>
       </n-form-item>
-      <n-form-item label="起始年份" path="startYear">
+      <n-form-item label="开始年份" path="startYear">
         <n-input-number v-model:value="formValue.startYear" clearable placeholder="开始年份" />
       </n-form-item>
       <n-form-item label="结束年份" path="endYear">
