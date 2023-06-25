@@ -14,7 +14,7 @@
         <n-input-number v-model:value="formValue.year" placeholder="输入发表年份" />
       </n-form-item>
       <n-form-item label="学期" path="year">
-        <n-select v-model:value="formValue.term" class="w-60" clearable placeholder="选择学期" :options="termOptions" />
+        <n-select v-model:value="formValue.term" class="w-60" clearable placeholder="选择学期" :options="classTermMap" />
       </n-form-item>
       <n-form-item>
         <n-dynamic-input v-model:value="formValue.teachHours" :on-create="onCreate">
@@ -51,8 +51,8 @@
 </template>
 
 <script setup lang="ts">
-import { Term } from '@prisma/client'
 import { NButton } from 'naive-ui'
+import { classTermMap } from '~/types'
 const { data: classes } = useFetch('/api/classes')
 const classOptions = computed(() => {
   return classes.value?.map((class_) => {
@@ -87,21 +87,6 @@ const formValue = ref({
     num: 0
   }]
 })
-
-const termOptions: Array<{label: string, value: Term}> = [
-  {
-    label: '春季学期',
-    value: 'SPRING'
-  },
-  {
-    label: '夏季学期',
-    value: 'SUMMER'
-  },
-  {
-    label: '秋季学期',
-    value: 'AUTUMN'
-  }
-]
 
 const createColumns = () => {
   return [
@@ -156,7 +141,7 @@ const queryTeachClass = async () => {
       id: teachClass.classId,
       class: classes.value?.find(class_ => class_.id === teachClass.classId)?.name,
       year: teachClass.year,
-      term: termOptions.find(term => term.value === teachClass.term)?.label,
+      term: classTermMap.find(term => term.value === teachClass.term)?.label,
       teacher: teachers.value?.find(teacher => teacher.id === teachClass.teacherId)?.name,
       classHour: teachClass.class_hour
     }

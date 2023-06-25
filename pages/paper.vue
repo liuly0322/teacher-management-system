@@ -17,10 +17,10 @@
         <n-input-number v-model:value="formValue.year" clearable placeholder="输入发表年份" />
       </n-form-item>
       <n-form-item label="类型" path="type">
-        <n-select v-model:value="formValue.type" class="w-60" :options="typeOptions" />
+        <n-select v-model:value="formValue.type" clearable placeholder="选择类型" class="w-60" :options="paperTypeMap" />
       </n-form-item>
       <n-form-item label="级别" path="level">
-        <n-select v-model:value="formValue.level" class="w-60" :options="levelOptions" />
+        <n-select v-model:value="formValue.level" clearable placeholder="选择级别" class="w-60" :options="paperLevelMap" />
       </n-form-item>
       <n-form-item label="作者" path="authors">
         <n-select v-model:value="formValue.authors" class="w-60" multiple placeholder="选择作者" :options="teacherOptions" />
@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import { NButton } from 'naive-ui'
+import { paperTypeMap, paperLevelMap } from '~/types'
 const { data: teachers } = useFetch('/api/teachers')
 const teacherOptions = computed(() => {
   return teachers.value?.map((teacher) => {
@@ -64,65 +65,11 @@ const formValue = ref({
   name: '',
   origin: '',
   year: new Date().getFullYear(),
-  type: '',
-  level: '',
+  type: null,
+  level: null,
   authors: [],
   communicationAuthor: null
 })
-
-const typeOptions = [
-  {
-    label: '任意',
-    value: ''
-  },
-  {
-    label: 'full',
-    value: 'FULL'
-  },
-  {
-    label: 'short',
-    value: 'SHORT'
-  },
-  {
-    label: 'other',
-    value: 'POSTER'
-  },
-  {
-    label: 'demo',
-    value: 'DEMO'
-  }
-]
-
-const levelOptions = [
-  {
-    label: '任意',
-    value: ''
-  },
-  {
-    label: 'CCF_A',
-    value: 'CCF_A'
-  },
-  {
-    label: 'CCF_B',
-    value: 'CCF_B'
-  },
-  {
-    label: 'CCF_C',
-    value: 'CCF_C'
-  },
-  {
-    label: '中文 CCF_A',
-    value: 'Chinese_CCF_A'
-  },
-  {
-    label: '中文 CCF_B',
-    value: 'Chinese_CCF_B'
-  },
-  {
-    label: '其他',
-    value: 'None'
-  }
-]
 
 const createColumns = () => {
   return [
@@ -188,31 +135,25 @@ const queryPaper = async () => {
   const query = param.filter(([_, value]) => value).map(([key, value]) => `${key}=${value}`).join('&')
   const data = await fetch(encodeURI(`/api/papers?${query}`))
   const res = await data.json()
-  paperTableData.value.splice(0, paperTableData.value.length)
-  paperTableData.value.push(...res.map((paper: any) => {
+  paperTableData.value = res.map((paper: any) => {
     return {
       ...paper,
+      type: paperTypeMap.find(p => p.value === paper.type)?.label,
+      level: paperLevelMap.find(p => p.value === paper.level)?.label,
       authors: paper.TeacherOnPaper.map((teacher: { teacher: { name: any; }; }) => teacher.teacher.name).join(','),
       communicationAuthor: paper.TeacherOnPaper.filter((teacher: { is_communicating_author: any; }) => teacher.is_communicating_author).map((teacher: { teacher: { name: any; }; }) => teacher.teacher.name).join(',')
     }
-  }))
+  })
 }
 const newPaper = async () => {
-  const data = await fetch('/api/papers', {
+  await fetch('/api/papers', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(formValue.value)
   })
-  const res = await data.json()
-  paperTableData.value.splice(0, paperTableData.value.length)
-  paperTableData.value.push({
-    ...formValue.value,
-    id: res.paper.id,
-    authors: formValue.value.authors.map((author: string) => teachers.value?.find(t => t.id === author)?.name).join(','),
-    communicationAuthor: teachers.value?.find(t => t.id === formValue.value.communicationAuthor)?.name
-  })
+  await queryPaper()
 }
 const deletePaper = async (id: number) => {
   await fetch('/api/papers', {

@@ -17,7 +17,7 @@
         <n-input v-model:value="formValue.origin" placeholder="输入项目来源" />
       </n-form-item>
       <n-form-item label="项目类型" path="type">
-        <n-select v-model:value="formValue.type" class="w-60" clearable placeholder="选择项目类型" :options="typeOptions" />
+        <n-select v-model:value="formValue.type" class="w-60" clearable placeholder="选择项目类型" :options="projectTypeMap" />
       </n-form-item>
       <n-form-item label="项目经费" path="fund">
         <n-input-number v-model:value="formValue.fund" placeholder="输入总经费">
@@ -71,8 +71,8 @@
 </template>
 
 <script setup lang="ts">
-import { ProjectType } from '@prisma/client'
 import { NButton } from 'naive-ui'
+import { projectTypeMap } from '~/types'
 const { data: teachers } = useFetch('/api/teachers')
 const teacherOptions = computed(() => {
   return teachers.value?.map((teacher) => {
@@ -102,29 +102,6 @@ const formValue = ref({
     num: 0
   }]
 })
-
-const typeOptions: Array<{label: string, value: ProjectType}> = [
-  {
-    label: '国家级',
-    value: 'NATIONAL'
-  },
-  {
-    label: '省级',
-    value: 'PROVINCIAL'
-  },
-  {
-    label: '市级别',
-    value: 'MUNICIPAL'
-  },
-  {
-    label: '企业合作',
-    value: 'ENTERPRISE'
-  },
-  {
-    label: '其他',
-    value: 'OTHER'
-  }
-]
 
 const createColumns = () => {
   return [
@@ -190,7 +167,7 @@ const queryProject = async () => {
       id: project.id,
       name: project.name,
       origin: project.origin,
-      type: typeOptions.find(t => t.value === project.type)?.label,
+      type: projectTypeMap.find(t => t.value === project.type)?.label,
       year: `${project.start_year}-${project.end_year}`,
       fund: project.TeacherOnProject.map((t) => {
         return `${t.teacher.name}(${t.fund})`

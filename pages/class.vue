@@ -14,7 +14,7 @@
         <n-input v-model:value="formValue.name" placeholder="输入课程名" />
       </n-form-item>
       <n-form-item label="课程类型" path="type">
-        <n-select v-model:value="formValue.type" class="w-60" :options="typeOptions" />
+        <n-select v-model:value="formValue.type" class="w-60" :options="classTypeMap" />
       </n-form-item>
       <n-form-item label="课时" path="totalClassHour ">
         <n-input-number v-model:value="formValue.totalClassHour " placeholder="输入课时" />
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { classType } from '@prisma/client'
+import { classTypeMap } from '~/types'
 const { data: classes, refresh } = useFetch('/api/classes')
 const formValue = ref({
   id: '',
@@ -43,16 +43,6 @@ const formValue = ref({
   type: 'UNDERGRADUATE',
   totalClassHour: 0
 })
-const typeOptions: Array<{label:string, value: classType}> = [
-  {
-    label: '本科生课程',
-    value: 'UNDERGRADUATE'
-  },
-  {
-    label: '研究生课程',
-    value: 'MASTER'
-  }
-]
 const newCourse = async () => {
   await fetch('/api/classes', {
     method: 'POST',
@@ -84,13 +74,10 @@ const createColumns = () => {
   ]
 }
 const columns = createColumns()
-const classTableData = computed(() => classes.value?.map((c: any) => {
-  const class_ = Object.assign({}, c)
-  if (class_.type === 'MASTER') {
-    class_.type = '研究生课程'
-  } else {
-    class_.type = '本科生课程'
+const classTableData = computed(() => classes.value?.map((class_: any) => {
+  return {
+    ...class_,
+    type: classTypeMap.find(c => c.value === class_.type)?.label
   }
-  return class_
 }))
 </script>
