@@ -90,19 +90,22 @@ const onCreate = () => {
 }
 
 const formValue = ref({
-  id: null,
-  name: null,
-  origin: null,
-  type: null,
+  id: null as null | string,
+  name: null as null | string,
+  origin: null as null | string,
+  type: null as null | string,
   fund: 0,
   startYear: new Date().getFullYear(),
   endYear: new Date().getFullYear(),
   teacherFunds: [{
-    teacherId: null,
+    teacherId: null as null | string,
     num: 0
   }]
 })
 
+type rowType = Exclude<ReturnType<
+    typeof useFetch<void, unknown, '/api/projects'>
+  >['data']['value'], null>[number];
 const createColumns = () => {
   return [
     {
@@ -120,60 +123,75 @@ const createColumns = () => {
     },
     {
       title: '项目类型',
-      key: 'type'
+      key: 'type_'
     },
     {
       title: '起始年份',
-      key: 'year'
+      key: 'year_'
     },
     {
       title: '经费',
-      key: 'fund',
+      key: 'fund_',
       width: 200
     },
     {
       title: '操作',
       key: 'actions',
-      render (row: any) {
-        return h(
+      render (row: rowType) {
+        return [h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => {
+              formValue.value.id = row.id
+              formValue.value.name = row.name
+              formValue.value.origin = row.origin
+              formValue.value.type = row.type
+              formValue.value.fund = row.TeacherOnProject.reduce((acc, cur) => {
+                return acc + cur.fund
+              }, 0)
+              formValue.value.startYear = row.start_year
+              formValue.value.endYear = row.end_year
+              formValue.value.teacherFunds = row.TeacherOnProject.map((teacher) => {
+                return {
+                  teacherId: teacher.teacher.id,
+                  num: teacher.fund
+                }
+              })
+            }
+          },
+          { default: () => '同步' }
+        ), h(
           NButton,
           {
             size: 'small',
             onClick: () => { deleteProject(row.id) }
           },
           { default: () => '删除' }
-        )
+        )]
       }
     }
   ]
 }
 const columns = createColumns()
-const projectTableData = ref([] as any[])
+const projectTableData = ref([] as rowType[])
 const queryProject = async () => {
-  const data = {
+  const query = {
     ...formValue.value,
     fund: null,
     teacherFunds: null
   }
-  const param = Object.entries(data).filter(([_, value]) => {
-    return value
-  }).map(([key, value]) => {
-    return `${key}=${value}`
-  }).join('&')
-  const resp = await fetch(encodeURI(`/api/projects?${param}`))
-  const json = await resp.json()
-  projectTableData.value = json.map((project: { id: any; name: any; origin: any; type: any; start_year: any; end_year: any; TeacherOnProject: any[]; }) => {
+  const { data } = await useFetch('/api/projects', { query })
+  projectTableData.value = data.value?.map((project) => {
     return {
-      id: project.id,
-      name: project.name,
-      origin: project.origin,
-      type: projectTypeMap.find(t => t.value === project.type)?.label,
-      year: `${project.start_year}-${project.end_year}`,
-      fund: project.TeacherOnProject.map((t) => {
+      ...project,
+      type_: projectTypeMap.find(t => t.value === project.type)!.label,
+      year_: `${project.start_year}-${project.end_year}`,
+      fund_: project.TeacherOnProject.map((t) => {
         return `${t.teacher.name}(${t.fund})`
       }).join(',')
     }
-  })
+  }) || []
 }
 const newProject = async () => {
   const resp = await fetch('/api/projects', {

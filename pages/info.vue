@@ -43,17 +43,17 @@
               姓名：{{ queryResult.name }}
             </div>
             <div class="flex-item">
-              性别：{{ genderMap.find(g => g.value == queryResult.gender)?.label }}
+              性别：{{ genderMap.find(g => g.value == queryResult!.gender)?.label }}
             </div>
             <div class="flex-item">
-              职称：{{ teacherTitleMap.find(t => t.value == queryResult.title)?.label }}
+              职称：{{ teacherTitleMap.find(t => t.value == queryResult!.title)?.label }}
             </div>
           </div>
         </div>
         <div v-if="queryResult.TeacherOnClass.length > 0">
           <h2>教学情况</h2>
           <hr>
-          <div v-for="class_ in queryResult.TeacherOnClass" :key="class_" class="flex">
+          <div v-for="(class_, i) in queryResult.TeacherOnClass" :key="i" class="flex">
             <div class="flex-item">
               课程号：{{ class_.class.id }}
             </div>
@@ -71,7 +71,7 @@
         <div v-if="queryResult.TeacherOnPaper.length > 0">
           <h2>发表论文情况</h2>
           <hr>
-          <div v-for="(paper, i) in queryResult.TeacherOnPaper" :key="paper">
+          <div v-for="(paper, i) in queryResult.TeacherOnPaper" :key="i">
             {{ i+1 }}：{{ paper.paper.name }}，{{ paper.paper.origin }}，{{ paper.paper.year }}，{{ paperLevelMap.find(p => p.value === paper.paper.level)?.label }}，排名第 {{ paper.rank }}
             <span v-if="paper.is_communicating_author">，通讯作者</span>
           </div>
@@ -79,7 +79,7 @@
         <div v-if="queryResult.TeacherOnProject.length > 0">
           <h2>承担项目情况</h2>
           <hr>
-          <div v-for="(project, i) in queryResult.TeacherOnProject" :key="project">
+          <div v-for="(project, i) in queryResult.TeacherOnProject" :key="i">
             {{ i+1 }}：{{ project.project.name }}，{{ project.project.origin }}，{{ projectTypeMap.find(p => p.value === project.project.type)?.label }}，{{ project.project.start_year }}—{{ project.project.end_year }}，总经费 {{ project.project.total_fund }}，承担经费 {{ project.fund }}
           </div>
         </div>
@@ -97,7 +97,10 @@ const formValue = ref({
   endYear: new Date().getFullYear()
 })
 
-const queryResult = ref(null as any)
+type queryResultType = ReturnType<
+    typeof useFetch<void, unknown, '/api/teacherInfo'>
+  >['data']['value'];
+const queryResult = ref(null as queryResultType)
 const queryTeacher = async () => {
   const { id, startYear, endYear } = formValue.value
   const { data: teacherInfo } = await useFetch('/api/teacherInfo', {

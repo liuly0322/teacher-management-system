@@ -88,11 +88,14 @@ const formValue = ref({
   }]
 })
 
+type rowType = Exclude<ReturnType<
+    typeof useFetch<void, unknown, '/api/teachClasses'>
+  >['data']['value'], null>[number];
 const createColumns = () => {
   return [
     {
       title: '课程号',
-      key: 'id'
+      key: 'classId'
     },
     {
       title: '课程',
@@ -104,7 +107,7 @@ const createColumns = () => {
     },
     {
       title: '学期',
-      key: 'term'
+      key: 'term_'
     },
     {
       title: '教师',
@@ -112,12 +115,12 @@ const createColumns = () => {
     },
     {
       title: '承担课时',
-      key: 'classHour'
+      key: 'class_hour'
     },
     {
       title: '操作',
       key: 'actions',
-      render (row: any) {
+      render (row: rowType) {
         return h(
           NButton,
           {
@@ -131,7 +134,7 @@ const createColumns = () => {
   ]
 }
 const columns = createColumns()
-const classTableData = ref([] as any[])
+const classTableData = ref([] as rowType[])
 const queryTeachClass = async () => {
   // 请求 classId 参数即可
   const { data: teachClasses } = await useFetch('/api/teachClasses', {
@@ -144,12 +147,10 @@ const queryTeachClass = async () => {
 
   classTableData.value = teachClasses.value!.map((teachClass) => {
     return {
-      id: teachClass.classId,
+      ...teachClass,
+      term_: classTermMap.find(term => term.value === teachClass.term)?.label,
       class: classes.value?.find(class_ => class_.id === teachClass.classId)?.name,
-      year: teachClass.year,
-      term: classTermMap.find(term => term.value === teachClass.term)?.label,
-      teacher: teachers.value?.find(teacher => teacher.id === teachClass.teacherId)?.name,
-      classHour: teachClass.class_hour
+      teacher: teachers.value?.find(teacher => teacher.id === teachClass.teacherId)?.name
     }
   })
 }
@@ -163,10 +164,10 @@ const newTeachClass = async () => {
   }
   await queryTeachClass()
 }
-const deleteTeachClass = async (row: { id: any; year: any; term: any; }) => {
+const deleteTeachClass = async (row: rowType) => {
   await useFetch('/api/teachClasses', {
     method: 'delete',
-    body: { id: row.id, year: row.year, term: classTermMap.find(term => term.label === row.term)?.value }
+    body: { id: row.classId, year: row.year, term: row.term }
   })
   await queryTeachClass()
 }

@@ -49,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import { PaperLevel, PaperType } from '@prisma/client'
 import { NButton } from 'naive-ui'
 import { paperTypeMap, paperLevelMap } from '~/types'
 const { data: teachers } = useFetch('/api/teachers')
@@ -65,12 +66,15 @@ const formValue = ref({
   name: '',
   origin: '',
   year: new Date().getFullYear(),
-  type: null,
-  level: null,
-  authors: [],
-  communicationAuthor: null
+  type: null as (null | PaperType),
+  level: null as (null | PaperLevel),
+  authors: [] as string[],
+  communicationAuthor: null as (null | string)
 })
 
+type rowType = Exclude<ReturnType<
+    typeof useFetch<void, unknown, '/api/papers'>
+  >['data']['value'], null>[number];
 const createColumns = () => {
   return [
     {
@@ -92,11 +96,11 @@ const createColumns = () => {
     },
     {
       title: '类型',
-      key: 'type'
+      key: 'type_'
     },
     {
       title: '级别',
-      key: 'level'
+      key: 'level_'
     },
     {
       title: '作者',
@@ -109,21 +113,36 @@ const createColumns = () => {
     {
       title: '操作',
       key: 'actions',
-      render (row: {id: number}) {
-        return h(
+      render (row: rowType) {
+        return [h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => {
+              formValue.value.name = row.name
+              formValue.value.origin = row.origin
+              formValue.value.year = row.year
+              formValue.value.type = row.type
+              formValue.value.level = row.level
+              formValue.value.authors = row.TeacherOnPaper.map(t => t.teacher.id)
+              formValue.value.communicationAuthor = row.TeacherOnPaper.find(t => t.is_communicating_author)!.teacher.id
+            }
+          },
+          { default: () => '同步' }
+        ), h(
           NButton,
           {
             size: 'small',
             onClick: () => { deletePaper(row.id) }
           },
           { default: () => '删除' }
-        )
+        )]
       }
     }
   ]
 }
 const columns = createColumns()
-const paperTableData = ref([] as any[])
+const paperTableData = ref([] as rowType[])
 const queryPaper = async () => {
   // name, origin, year, type, level, authors 作为 GET 的 url 参数
   const query = { ...formValue.value, authors: formValue.value.authors.join(',') }
@@ -131,30 +150,24 @@ const queryPaper = async () => {
   paperTableData.value = data.value?.map((paper) => {
     return {
       ...paper,
-      type: paperTypeMap.find(p => p.value === paper.type)?.label,
-      level: paperLevelMap.find(p => p.value === paper.level)?.label,
+      type_: paperTypeMap.find(p => p.value === paper.type)?.label,
+      level_: paperLevelMap.find(p => p.value === paper.level)?.label,
       authors: paper.TeacherOnPaper.map(teacher => teacher.teacher.name).join(','),
       communicationAuthor: paper.TeacherOnPaper.filter(teacher => teacher.is_communicating_author).map(teacher => teacher.teacher.name).join(',')
     }
   }) || []
 }
 const newPaper = async () => {
-  await fetch('/api/papers', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+  await useFetch('/api/papers', {
+    method: 'post',
     body: JSON.stringify(formValue.value)
   })
   await queryPaper()
 }
 const deletePaper = async (id: number) => {
-  await fetch('/api/papers', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id })
+  await useFetch('/api/papers', {
+    method: 'delete',
+    body: { id }
   })
   await queryPaper()
 }
