@@ -154,27 +154,19 @@ const queryTeachClass = async () => {
   })
 }
 const newTeachClass = async () => {
-  const resp = await fetch('/api/teachClasses', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+  const { error } = await useFetch('/api/teachClasses', {
+    method: 'post',
     body: JSON.stringify(formValue.value)
   })
-  if (resp.status === 500) {
-    const res = await resp.json()
-    alert(res.message)
-    return
+  if (error.value) {
+    alert('新增失败，请检查各老师承担学时之和是否等于总学时')
   }
   await queryTeachClass()
 }
 const deleteTeachClass = async (row: { id: any; year: any; term: any; }) => {
-  await fetch('/api/teachClasses', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id: row.id, year: row.year, term: row.term })
+  await useFetch('/api/teachClasses', {
+    method: 'delete',
+    body: { id: row.id, year: row.year, term: classTermMap.find(term => term.label === row.term)?.value }
   })
   await queryTeachClass()
 }
