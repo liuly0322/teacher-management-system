@@ -134,9 +134,15 @@ const columns = createColumns()
 const classTableData = ref([] as any[])
 const queryTeachClass = async () => {
   // 请求 classId 参数即可
-  const data = await fetch('/api/teachClasses' + (formValue.value.id ? `?classId=${formValue.value.id}` : ''))
-  const res = await data.json()
-  classTableData.value = res.map((teachClass: any) => {
+  const { data: teachClasses } = await useFetch('/api/teachClasses', {
+    query: formValue.value.id
+      ? {
+          classId: formValue.value.id
+        }
+      : {}
+  })
+
+  classTableData.value = teachClasses.value!.map((teachClass) => {
     return {
       id: teachClass.classId,
       class: classes.value?.find(class_ => class_.id === teachClass.classId)?.name,

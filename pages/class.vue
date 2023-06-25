@@ -74,7 +74,7 @@ const createColumns = () => {
   ]
 }
 const columns = createColumns()
-const classTableData = computed(() => classes.value?.map((class_: any) => {
+const classTableData = computed(() => classes.value?.map((class_) => {
   return {
     ...class_,
     type: classTypeMap.find(c => c.value === class_.type)?.label

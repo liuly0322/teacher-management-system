@@ -100,13 +100,14 @@ const formValue = ref({
 const queryResult: Ref<any> = ref(null)
 const queryTeacher = async () => {
   const { id, startYear, endYear } = formValue.value
-  const res = await fetch(`/api/teacherInfo?${id ? `id=${id}` : ''}${startYear ? `&startYear=${startYear}` : ''}${endYear ? `&endYear=${endYear}` : ''}`)
-  const data = await res.json()
-  queryResult.value = data
+  const { data: teacherInfo } = await useFetch('/api/teacherInfo', {
+    query: { id, startYear, endYear }
+  })
+  queryResult.value = teacherInfo.value
 }
 
 const exportInfo = () => {
-  if (typeof (window as any).html2pdf === 'undefined') {
+  if (typeof window.html2pdf === 'undefined') {
     function addScript (url: string) {
       const script = document.createElement('script')
       script.type = 'application/javascript'
@@ -116,9 +117,9 @@ const exportInfo = () => {
     addScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js')
   }
   const loop = setInterval(() => {
-    if (typeof (window as any).html2pdf !== 'undefined') {
-      clearInterval(loop);
-      ((window as any).html2pdf)(document.getElementById('info'))
+    if (typeof window.html2pdf !== 'undefined') {
+      clearInterval(loop)
+      window.html2pdf(document.getElementById('info'))
     }
   }, 100)
 }

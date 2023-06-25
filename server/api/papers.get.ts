@@ -4,7 +4,7 @@ export default defineEventHandler((event) => {
   const { name, origin, year, type, level, authors } = getQuery(event)
   if (type && !Object.values(PaperType).includes(type as PaperType)) { throw new Error('Invalid paper type') }
   if (level && !Object.values(PaperLevel).includes(level as PaperLevel)) { throw new Error('Invalid paper level') }
-  const authorIds = ((authors || '') as string).split(',').filter((authorId: any) => authorId)
+  const authorIds = ((authors || '') as string).split(',').filter(authorId => authorId)
   const conditions = Object()
   if (name) { conditions.name = { contains: name } }
   if (origin) { conditions.origin = { contains: origin } }

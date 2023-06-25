@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   })
 
   const teacherOnPaper = await event.context.prisma.teacherOnPaper.createMany({
-    data: authors.map((authorId: any, index: number) => ({
+    data: authors.map((authorId: string, index: number) => ({
       paperId: paper.id,
       teacherId: authorId,
       is_communicating_author: authorId === communicationAuthor,
