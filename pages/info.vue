@@ -126,6 +126,10 @@ const exportInfo = () => {
 </script>
 
 <style scoped>
+#info {
+  padding-bottom: 4em;
+}
+
 #info h1 {
   margin-top: 2em;
   margin-bottom: 2em;
@@ -135,6 +139,7 @@ const exportInfo = () => {
 }
 
 #info h2 {
+  margin-top: 1em;
   font-size: 1.1em;
   font-weight: bold;
 }
@@ -143,7 +148,7 @@ const exportInfo = () => {
   margin: 0 20px 0 0;
 }
 
-#info hr+div, #info hr+ol {
-  margin: 1em 0;
+#info hr {
+  margin-bottom: 1em
 }
 </style>
