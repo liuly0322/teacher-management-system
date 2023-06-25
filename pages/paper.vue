@@ -14,7 +14,7 @@
         <n-input v-model:value="formValue.origin" placeholder="输入发表源" />
       </n-form-item>
       <n-form-item label="年份" path="year">
-        <n-input-number v-model:value="formValue.year" placeholder="输入发表年份" />
+        <n-input-number v-model:value="formValue.year" clearable placeholder="输入发表年份" />
       </n-form-item>
       <n-form-item label="类型" path="type">
         <n-select v-model:value="formValue.type" class="w-60" :options="typeOptions" />

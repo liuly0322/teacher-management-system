@@ -1,19 +1,5 @@
-function parseUrl (url: string) {
-  const regUrl = /^[^?]+\?([\w\W]+)$/
-  const regPara = /([^&=]+)=([\w\W]*?)(&|$|#)/g
-  const arrUrl = regUrl.exec(url)
-  const ret = Object()
-  if (arrUrl && arrUrl[1]) {
-    const strPara = arrUrl[1]; let result
-    while ((result = regPara.exec(strPara)) != null) {
-      ret[result[1]] = decodeURI(result[2])
-    }
-  }
-  return ret
-}
-
 export default defineEventHandler((event) => {
-  const { id, name, origin, type, startYear, endYear } = parseUrl(event.path)
+  const { id, name, origin, type, startYear, endYear } = getQuery(event)
   const conditions = Object()
   if (id) { conditions.id = { equals: id } }
   if (name) { conditions.name = { contains: name } }
