@@ -1,27 +1,18 @@
 # teacher-management-app
 
-This is a [sidebase merino](https://sidebase.io/) app created by running `pnpm create sidebase@latest`. This project uses the following technologies for a great developer- and user-experience:
-- [TypeScript](https://www.typescriptlang.org/)
-- [Nuxt 3](https://nuxt.com)
-- Prisma ORM
-- Tailwind CSS
-- Naive UI
+This is USTC 2023 Database course Lab3.
 
-## How to get going?
+It's created by running `pnpm create sidebase@latest`. For more information, check [sidebase merino](https://sidebase.io).
 
-This is a straight-forward setup with minimal templating and scaffolding. The options you selected during the sidebase CLI setup are all here though. Good places to continue reading are:
-- [the First Steps documentation](https://sidebase.io/sidebase/usage)
-- [our discord](https://discord.gg/auc8eCeGzx)
+This project uses the following technologies for a great developer- and user-experience:
 
-Some tasks you should probably do in the beginning are:
-- [ ] replace this generic README with a more specific one
-- [ ] install the Vue Volar extension
-- [ ] enable [Volar takeover mode](https://nuxt.com/docs/getting-started/installation#prerequisites) to ensure a smooth editor setup
-- [ ] [install Nuxt 3 devtools](https://github.com/nuxt/devtools#installation) if you want to use them
-- [ ] Prisma: Edit your `prisma/prisma.schema` to your liking
-- [ ] Prisma: Run `npx prisma db push` to sync the schema to your database & generate the Prisma Client
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [Nuxt 3](https://nuxt.com)
+-   Prisma ORM
+-   Tailwind CSS
+-   Naive UI
 
-### Setup
+## Setup
 
 Make sure to install the dependencies:
 
@@ -29,7 +20,20 @@ Make sure to install the dependencies:
 pnpm install
 ```
 
-### Development Server
+## Development Server
+
+You need a mysql server running on your machine. You can use docker to start one:
+
+```bash
+docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=teacher_db -e MYSQL_USER=user -e MYSQL_PASSWORD=password -p 3306:3306 -d mysql:latest
+```
+
+Then, create `.env` file like this:
+
+```bash
+# Prisma
+DATABASE_URL=mysql://user:password@localhost:3306/teacher_db
+```
 
 Start the development server on http://localhost:3000
 
@@ -37,7 +41,7 @@ Start the development server on http://localhost:3000
 pnpm run dev
 ```
 
-### Production
+## Production
 
 Build the application for production:
 
