@@ -109,7 +109,7 @@ const createColumns = () => {
     {
       title: '操作',
       key: 'actions',
-      render (row: any) {
+      render (row: {id: number}) {
         return h(
           NButton,
           {
@@ -126,24 +126,17 @@ const columns = createColumns()
 const paperTableData = ref([] as any[])
 const queryPaper = async () => {
   // name, origin, year, type, level, authors 作为 GET 的 url 参数
-  const param = Object.entries(formValue.value).map(([key, value]) => {
-    if (key === 'authors') {
-      return [key, (value as string[]).join(',')]
-    }
-    return [key, value]
-  })
-  const query = param.filter(([_, value]) => value).map(([key, value]) => `${key}=${value}`).join('&')
-  const data = await fetch(encodeURI(`/api/papers?${query}`))
-  const res = await data.json()
-  paperTableData.value = res.map((paper: any) => {
+  const query = { ...formValue.value, authors: formValue.value.authors.join(',') }
+  const { data } = await useFetch('/api/papers', { query })
+  paperTableData.value = data.value?.map((paper) => {
     return {
       ...paper,
       type: paperTypeMap.find(p => p.value === paper.type)?.label,
       level: paperLevelMap.find(p => p.value === paper.level)?.label,
-      authors: paper.TeacherOnPaper.map((teacher: { teacher: { name: any; }; }) => teacher.teacher.name).join(','),
-      communicationAuthor: paper.TeacherOnPaper.filter((teacher: { is_communicating_author: any; }) => teacher.is_communicating_author).map((teacher: { teacher: { name: any; }; }) => teacher.teacher.name).join(',')
+      authors: paper.TeacherOnPaper.map(teacher => teacher.teacher.name).join(','),
+      communicationAuthor: paper.TeacherOnPaper.filter(teacher => teacher.is_communicating_author).map(teacher => teacher.teacher.name).join(',')
     }
-  })
+  }) || []
 }
 const newPaper = async () => {
   await fetch('/api/papers', {

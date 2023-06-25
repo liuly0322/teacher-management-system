@@ -97,7 +97,7 @@ const formValue = ref({
   endYear: new Date().getFullYear()
 })
 
-const queryResult: Ref<any> = ref(null)
+const queryResult = ref(null as any)
 const queryTeacher = async () => {
   const { id, startYear, endYear } = formValue.value
   const { data: teacherInfo } = await useFetch('/api/teacherInfo', {
