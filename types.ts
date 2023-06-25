@@ -117,23 +117,23 @@ export const paperLevelMap: Array<{label: string, value: PaperLevel}> = [
 
 export const projectTypeMap: Array<{label: string, value: ProjectType}> = [
   {
-    label: '国家级',
+    label: '国家级项目',
     value: 'NATIONAL'
   },
   {
-    label: '省级',
+    label: '省级项目',
     value: 'PROVINCIAL'
   },
   {
-    label: '市级别',
+    label: '市级项目',
     value: 'MUNICIPAL'
   },
   {
-    label: '企业合作',
+    label: '企业合作项目',
     value: 'ENTERPRISE'
   },
   {
-    label: '其他',
+    label: '其他项目',
     value: 'OTHER'
   }
 ]
