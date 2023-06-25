@@ -36,7 +36,6 @@
 </template>
 
 <script setup lang="ts">
-// fetch teachers
 import { teacherTitleMap, genderMap } from '~/types'
 const { data: teachers, refresh } = useFetch('/api/teachers')
 const formValue = ref({
@@ -47,11 +46,8 @@ const formValue = ref({
 })
 
 const newTeacher = async () => {
-  await fetch('/api/teachers', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+  await useFetch('/api/teachers', {
+    method: 'post',
     body: JSON.stringify(formValue.value)
   })
   await refresh()

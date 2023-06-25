@@ -44,11 +44,8 @@ const formValue = ref({
   totalClassHour: 0
 })
 const newCourse = async () => {
-  await fetch('/api/classes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+  await useFetch('/api/classes', {
+    method: 'post',
     body: JSON.stringify(formValue.value)
   })
   await refresh()

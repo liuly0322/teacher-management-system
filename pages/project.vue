@@ -194,27 +194,19 @@ const queryProject = async () => {
   }) || []
 }
 const newProject = async () => {
-  const resp = await fetch('/api/projects', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+  const { error } = await useFetch('/api/projects', {
+    method: 'post',
     body: JSON.stringify(formValue.value)
   })
-  if (resp.status === 500) {
-    const res = await resp.json()
-    alert(res.message)
-    return
+  if (error.value) {
+    alert('新增失败，请检查总经费的关系')
   }
   await queryProject()
 }
 const deleteProject = async (id: string) => {
-  await fetch('/api/projects', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id })
+  await useFetch('/api/projects', {
+    method: 'delete',
+    body: { id }
   })
   await queryProject()
 }
