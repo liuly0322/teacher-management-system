@@ -52,16 +52,8 @@
 import { PaperLevel, PaperType } from '@prisma/client'
 import { NButton } from 'naive-ui'
 import { paperTypeMap, paperLevelMap } from '~/types'
-const { data: teachers } = useFetch('/api/teachers')
-const teacherOptions = computed(() => {
-  return teachers.value?.map((teacher) => {
-    return {
-      label: teacher.name,
-      value: teacher.id
-    }
-  })
-})
-// 论文名称，发表源，年份，类型，级别，作者，通讯作者
+import useTeacher from '~/composables/useTeacher'
+const teacherOptions = useTeacher()
 const formValue = ref({
   name: '',
   origin: '',

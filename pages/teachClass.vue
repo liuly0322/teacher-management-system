@@ -53,6 +53,9 @@
 <script setup lang="ts">
 import { NButton } from 'naive-ui'
 import { classTermMap } from '~/types'
+import useTeacher, { teacherIdToName } from '~/composables/useTeacher'
+const teacherOptions = useTeacher()
+
 const { data: classes } = useFetch('/api/classes')
 const classOptions = computed(() => {
   return classes.value?.map((class_) => {
@@ -62,22 +65,13 @@ const classOptions = computed(() => {
     }
   })
 })
-const { data: teachers } = useFetch('/api/teachers')
-const teacherOptions = computed(() => {
-  return teachers.value?.map((teacher) => {
-    return {
-      label: teacher.name,
-      value: teacher.id
-    }
-  })
-})
+
 const onCreate = () => {
   return {
     teacherId: null,
     num: 0
   }
 }
-
 const formValue = ref({
   id: null,
   term: 'SPRING',
@@ -150,7 +144,7 @@ const queryTeachClass = async () => {
       ...teachClass,
       term_: classTermMap.find(term => term.value === teachClass.term)?.label,
       class: classes.value?.find(class_ => class_.id === teachClass.classId)?.name,
-      teacher: teachers.value?.find(teacher => teacher.id === teachClass.teacherId)?.name
+      teacher: teacherIdToName(teachClass.teacherId)
     }
   })
 }

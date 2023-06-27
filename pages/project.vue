@@ -73,15 +73,8 @@
 <script setup lang="ts">
 import { NButton } from 'naive-ui'
 import { projectTypeMap } from '~/types'
-const { data: teachers } = useFetch('/api/teachers')
-const teacherOptions = computed(() => {
-  return teachers.value?.map((teacher) => {
-    return {
-      label: teacher.name,
-      value: teacher.id
-    }
-  })
-})
+import useTeacher from '~/composables/useTeacher'
+const teacherOptions = useTeacher()
 const onCreate = () => {
   return {
     teacherId: null,

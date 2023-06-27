@@ -8,13 +8,13 @@
         :model="formValue"
         size="medium"
       >
-        <n-form-item label="工号" path="id">
-          <n-input v-model:value="formValue.id" maxlength="5" placeholder="输入工号" />
+        <n-form-item label="教师" path="id">
+          <n-select v-model:value="formValue.id" class="w-60" clearable placeholder="选择教师" :options="teacherOptions" />
         </n-form-item>
         <n-form-item label="开始年份" path="startYear">
           <n-input-number v-model:value="formValue.startYear" placeholder="输入开始年份" />
         </n-form-item>
-        <n-form-item label="开始年份" path="startYear">
+        <n-form-item label="结束年份" path="endYear">
           <n-input-number v-model:value="formValue.endYear" placeholder="输入结束年份" />
         </n-form-item>
         <n-form-item>
@@ -90,6 +90,8 @@
 
 <script setup lang="ts">
 import { classTermMap, genderMap, paperLevelMap, projectTypeMap, teacherTitleMap } from '~/types'
+import useTeacher from '~/composables/useTeacher'
+const teacherOptions = useTeacher()
 
 const formValue = ref({
   id: null,
