@@ -29,7 +29,7 @@
         </n-form-item>
       </n-form>
     </div>
-    <div v-if="queryResult" id="info" class="max-w-2xl mx-auto">
+    <div v-if="queryResult" id="info" class="max-w-3xl mx-auto">
       <div class="mx-4">
         <h1>教师教学科研工作统计（{{ formValue.startYear }}-{{ formValue.endYear }}）</h1>
         <div>
