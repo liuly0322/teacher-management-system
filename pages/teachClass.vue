@@ -79,25 +79,21 @@ const formValue = ref({
 type rowType = Exclude<ReturnType<
     typeof useFetch<void, unknown, '/api/teachClasses'>
   >['data']['value'], null>[number];
-const createColumns = () => {
-  return [
-    { title: '课程号', key: 'classId' },
-    { title: '课程', key: 'class' },
-    { title: '年份', key: 'year' },
-    { title: '学期', key: 'term_' },
-    { title: '教师', key: 'teacher' },
-    { title: '承担课时', key: 'class_hour' },
-    {
-      title: '操作',
-      key: 'actions',
-      render: (row: rowType) => h(NButton, { size: 'small', onClick: () => { deleteTeachClass(row) } }, { default: () => '删除' })
-    }
-  ]
-}
-const columns = createColumns()
+const columns = [
+  { title: '课程号', key: 'classId' },
+  { title: '课程', key: 'class' },
+  { title: '年份', key: 'year' },
+  { title: '学期', key: 'term_' },
+  { title: '教师', key: 'teacher' },
+  { title: '承担课时', key: 'class_hour' },
+  {
+    title: '操作',
+    key: 'actions',
+    render: (row: rowType) => h(NButton, { size: 'small', onClick: () => { deleteTeachClass(row) } }, { default: () => '删除' })
+  }
+]
 const classTableData = ref([] as rowType[])
 const queryTeachClass = async () => {
-  // 请求 classId 参数即可
   const { data: teachClasses } = await useFetch('/api/teachClasses', {
     query: formValue.value.id
       ? {
