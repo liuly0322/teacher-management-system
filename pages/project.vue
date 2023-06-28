@@ -1,12 +1,6 @@
 <template>
   <div>
-    <n-form
-      ref="formRef"
-      class="flex flex-wrap"
-      :label-width="80"
-      :model="formValue"
-      size="medium"
-    >
+    <n-form ref="formRef" class="flex flex-wrap" :label-width="80" :model="formValue" size="medium">
       <n-form-item label="项目号" path="id">
         <n-input v-model:value="formValue.id" class="w-60" clearable placeholder="输入项目号" />
       </n-form-item>
@@ -99,74 +93,41 @@ const formValue = ref({
 type rowType = Exclude<ReturnType<
     typeof useFetch<void, unknown, '/api/projects'>
   >['data']['value'], null>[number];
-const createColumns = () => {
-  return [
-    {
-      title: '项目号',
-      key: 'id'
-    },
-    {
-      title: '项目名称',
-      key: 'name',
-      with: 400
-    },
-    {
-      title: '项目来源',
-      key: 'origin'
-    },
-    {
-      title: '项目类型',
-      key: 'type_'
-    },
-    {
-      title: '起始年份',
-      key: 'year_'
-    },
-    {
-      title: '经费',
-      key: 'fund_',
-      width: 200
-    },
-    {
-      title: '操作',
-      key: 'actions',
-      render (row: rowType) {
-        return [h(
-          NButton,
-          {
-            size: 'small',
-            onClick: () => {
-              formValue.value.id = row.id
-              formValue.value.name = row.name
-              formValue.value.origin = row.origin
-              formValue.value.type = row.type
-              formValue.value.fund = row.TeacherOnProject.reduce((acc, cur) => {
-                return acc + cur.fund
-              }, 0)
-              formValue.value.startYear = row.start_year
-              formValue.value.endYear = row.end_year
-              formValue.value.teacherFunds = row.TeacherOnProject.map((teacher) => {
-                return {
-                  teacherId: teacher.teacher.id,
-                  num: teacher.fund
-                }
-              })
+const columns = [
+  { title: '项目号', key: 'id' },
+  { title: '项目名称', key: 'name', with: 400 },
+  { title: '项目来源', key: 'origin' },
+  { title: '项目类型', key: 'type_' },
+  { title: '起始年份', key: 'year_' },
+  { title: '经费', key: 'fund_', width: 200 },
+  {
+    title: '操作',
+    key: 'actions',
+    render (row: rowType) {
+      return [h(NButton, {
+        size: 'small',
+        onClick: () => {
+          formValue.value.id = row.id
+          formValue.value.name = row.name
+          formValue.value.origin = row.origin
+          formValue.value.type = row.type
+          formValue.value.fund = row.TeacherOnProject.reduce((acc, cur) => {
+            return acc + cur.fund
+          }, 0)
+          formValue.value.startYear = row.start_year
+          formValue.value.endYear = row.end_year
+          formValue.value.teacherFunds = row.TeacherOnProject.map((teacher) => {
+            return {
+              teacherId: teacher.teacher.id,
+              num: teacher.fund
             }
-          },
-          { default: () => '同步' }
-        ), h(
-          NButton,
-          {
-            size: 'small',
-            onClick: () => { deleteProject(row.id) }
-          },
-          { default: () => '删除' }
-        )]
-      }
+          })
+        }
+      }, { default: () => '同步' }
+      ), h(NButton, { size: 'small', onClick: () => { deleteProject(row.id) } }, { default: () => '删除' })]
     }
-  ]
-}
-const columns = createColumns()
+  }
+]
 const projectTableData = ref([] as rowType[])
 const queryProject = async () => {
   const query = {

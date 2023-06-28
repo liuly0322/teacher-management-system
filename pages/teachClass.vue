@@ -1,12 +1,6 @@
 <template>
   <div>
-    <n-form
-      ref="formRef"
-      class="flex flex-wrap"
-      :label-width="80"
-      :model="formValue"
-      size="medium"
-    >
+    <n-form ref="formRef" class="flex flex-wrap" :label-width="80" :model="formValue" size="medium">
       <n-form-item label="课程" path="id">
         <n-select v-model:value="formValue.id" class="w-60" clearable placeholder="选择课程" :options="classOptions" />
       </n-form-item>
@@ -87,43 +81,16 @@ type rowType = Exclude<ReturnType<
   >['data']['value'], null>[number];
 const createColumns = () => {
   return [
-    {
-      title: '课程号',
-      key: 'classId'
-    },
-    {
-      title: '课程',
-      key: 'class'
-    },
-    {
-      title: '年份',
-      key: 'year'
-    },
-    {
-      title: '学期',
-      key: 'term_'
-    },
-    {
-      title: '教师',
-      key: 'teacher'
-    },
-    {
-      title: '承担课时',
-      key: 'class_hour'
-    },
+    { title: '课程号', key: 'classId' },
+    { title: '课程', key: 'class' },
+    { title: '年份', key: 'year' },
+    { title: '学期', key: 'term_' },
+    { title: '教师', key: 'teacher' },
+    { title: '承担课时', key: 'class_hour' },
     {
       title: '操作',
       key: 'actions',
-      render (row: rowType) {
-        return h(
-          NButton,
-          {
-            size: 'small',
-            onClick: () => { deleteTeachClass(row) }
-          },
-          { default: () => '删除' }
-        )
-      }
+      render: (row: rowType) => h(NButton, { size: 'small', onClick: () => { deleteTeachClass(row) } }, { default: () => '删除' })
     }
   ]
 }

@@ -1,13 +1,7 @@
 <template>
   <div>
     <!-- submit new teacher -->
-    <n-form
-      ref="formRef"
-      inline
-      :label-width="80"
-      :model="formValue"
-      size="medium"
-    >
+    <n-form ref="formRef" inline :label-width="80" :model="formValue" size="medium">
       <n-form-item label="工号" path="id">
         <n-input v-model:value="formValue.id" maxlength="5" placeholder="输入工号" />
       </n-form-item>
@@ -26,53 +20,19 @@
         </n-button>
       </n-form-item>
     </n-form>
-    <n-data-table
-      :columns="columns"
-      :data="teacherTableData??[]"
-      :pagination="false"
-      :bordered="false"
-    />
+    <n-data-table :columns="columns" :data="teacherTableData ?? []" :pagination="false" :bordered="false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { teacherTitleMap, genderMap } from '~/types'
 const { data: teachers, refresh } = useFetch('/api/teachers')
-const formValue = ref({
-  id: '',
-  name: '',
-  gender: 'MALE',
-  title: 'PROFESSOR'
-})
-
-const newTeacher = async () => {
-  await useFetch('/api/teachers', {
-    method: 'post',
-    body: JSON.stringify(formValue.value)
-  })
-  await refresh()
-}
-const createColumns = () => {
-  return [
-    {
-      title: '工号',
-      key: 'id'
-    },
-    {
-      title: '姓名',
-      key: 'name'
-    },
-    {
-      title: '性别',
-      key: 'gender'
-    },
-    {
-      title: '职称',
-      key: 'title'
-    }
-  ]
-}
-const columns = createColumns()
+const columns = [
+  { title: '工号', key: 'id' },
+  { title: '姓名', key: 'name' },
+  { title: '性别', key: 'gender' },
+  { title: '职称', key: 'title' }
+]
 const teacherTableData = computed(() => teachers.value?.map((teacher) => {
   return {
     ...teacher,
@@ -80,4 +40,17 @@ const teacherTableData = computed(() => teachers.value?.map((teacher) => {
     gender: genderMap.find(g => g.value === teacher.gender)?.label
   }
 }))
+const formValue = ref({
+  id: '',
+  name: '',
+  gender: 'MALE',
+  title: 'PROFESSOR'
+})
+const newTeacher = async () => {
+  await useFetch('/api/teachers', {
+    method: 'post',
+    body: JSON.stringify(formValue.value)
+  })
+  await refresh()
+}
 </script>

@@ -1,12 +1,6 @@
 <template>
   <div>
-    <n-form
-      ref="formRef"
-      class="flex flex-wrap"
-      :label-width="80"
-      :model="formValue"
-      size="medium"
-    >
+    <n-form ref="formRef" class="flex flex-wrap" :label-width="80" :model="formValue" size="medium">
       <n-form-item label="论文名称" path="name">
         <n-input v-model:value="formValue.name" maxlength="255" placeholder="输入论文名称" />
       </n-form-item>
@@ -58,85 +52,46 @@ const formValue = ref({
   name: '',
   origin: '',
   year: new Date().getFullYear(),
-  type: null as (null | PaperType),
-  level: null as (null | PaperLevel),
+  type: null as null | PaperType,
+  level: null as null | PaperLevel,
   authors: [] as string[],
-  communicationAuthor: null as (null | string)
+  communicationAuthor: null as null | string
 })
 
 type rowType = Exclude<ReturnType<
     typeof useFetch<void, unknown, '/api/papers'>
   >['data']['value'], null>[number];
-const createColumns = () => {
-  return [
-    {
-      title: '论文号',
-      key: 'id'
-    },
-    {
-      title: '论文名',
-      key: 'name',
-      width: 400
-    },
-    {
-      title: '论文源',
-      key: 'origin'
-    },
-    {
-      title: '发表年份',
-      key: 'year'
-    },
-    {
-      title: '类型',
-      key: 'type_'
-    },
-    {
-      title: '级别',
-      key: 'level_'
-    },
-    {
-      title: '作者',
-      key: 'authors'
-    },
-    {
-      title: '通讯作者',
-      key: 'communicationAuthor'
-    },
-    {
-      title: '操作',
-      key: 'actions',
-      render (row: rowType) {
-        return [h(
-          NButton,
-          {
-            size: 'small',
-            onClick: () => {
-              formValue.value.name = row.name
-              formValue.value.origin = row.origin
-              formValue.value.year = row.year
-              formValue.value.type = row.type
-              formValue.value.level = row.level
-              formValue.value.authors = row.TeacherOnPaper.map(t => t.teacher.id)
-              formValue.value.communicationAuthor = row.TeacherOnPaper.find(t => t.is_communicating_author)!.teacher.id
-            }
-          },
-          { default: () => '同步' }
-        ), h(
-          NButton,
-          {
-            size: 'small',
-            onClick: () => { deletePaper(row.id) }
-          },
-          { default: () => '删除' }
-        )]
-      }
+const columns = [
+  { title: '论文号', key: 'id' },
+  { title: '论文名', key: 'name', width: 400 },
+  { title: '论文源', key: 'origin' },
+  { title: '发表年份', key: 'year' },
+  { title: '类型', key: 'type_' },
+  { title: '级别', key: 'level_' },
+  { title: '作者', key: 'authors' },
+  { title: '通讯作者', key: 'communicationAuthor' },
+  {
+    title: '操作',
+    key: 'actions',
+    render (row: rowType) {
+      return [h(NButton, {
+        size: 'small',
+        onClick: () => {
+          formValue.value.name = row.name
+          formValue.value.origin = row.origin
+          formValue.value.year = row.year
+          formValue.value.type = row.type
+          formValue.value.level = row.level
+          formValue.value.authors = row.TeacherOnPaper.map(t => t.teacher.id)
+          formValue.value.communicationAuthor = row.TeacherOnPaper.find(t => t.is_communicating_author)!.teacher.id
+        }
+      }, { default: () => '同步' }
+      ), h(NButton, { size: 'small', onClick: () => { deletePaper(row.id) } }, { default: () => '删除' })]
     }
-  ]
-}
-const columns = createColumns()
+  }
+]
 const paperTableData = ref([] as rowType[])
 const queryPaper = async () => {
-  // name, origin, year, type, level, authors 作为 GET 的 url 参数
   const query = { ...formValue.value, authors: formValue.value.authors.join(',') }
   const { data } = await useFetch('/api/papers', { query })
   paperTableData.value = data.value?.map((paper) => {

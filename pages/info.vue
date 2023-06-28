@@ -1,13 +1,7 @@
 <template>
   <div>
     <div>
-      <n-form
-        ref="formRef"
-        inline
-        :label-width="80"
-        :model="formValue"
-        size="medium"
-      >
+      <n-form ref="formRef" inline :label-width="80" :model="formValue" size="medium">
         <n-form-item label="教师" path="id">
           <n-select v-model:value="formValue.id" class="w-60" clearable placeholder="选择教师" :options="teacherOptions" />
         </n-form-item>
@@ -72,7 +66,8 @@
           <h2>发表论文情况</h2>
           <hr>
           <div v-for="(paper, i) in queryResult.TeacherOnPaper" :key="i">
-            {{ i+1 }}：{{ paper.paper.name }}，{{ paper.paper.origin }}，{{ paper.paper.year }}，{{ paperLevelMap.find(p => p.value === paper.paper.level)?.label }}，排名第 {{ paper.rank }}
+            {{ i + 1 }}：{{ paper.paper.name }}，{{ paper.paper.origin }}，{{ paper.paper.year }}，{{ paperLevelMap.find(p =>
+              p.value === paper.paper.level)?.label }}，排名第 {{ paper.rank }}
             <span v-if="paper.is_communicating_author">，通讯作者</span>
           </div>
         </div>
@@ -80,7 +75,9 @@
           <h2>承担项目情况</h2>
           <hr>
           <div v-for="(project, i) in queryResult.TeacherOnProject" :key="i">
-            {{ i+1 }}：{{ project.project.name }}，{{ project.project.origin }}，{{ projectTypeMap.find(p => p.value === project.project.type)?.label }}，{{ project.project.start_year }}—{{ project.project.end_year }}，总经费 {{ project.project.total_fund }}，承担经费 {{ project.fund }}
+            {{ i + 1 }}：{{ project.project.name }}，{{ project.project.origin }}，{{ projectTypeMap.find(p => p.value ===
+              project.project.type)?.label }}，{{ project.project.start_year }}—{{ project.project.end_year }}，总经费
+            {{ project.project.total_fund }}，承担经费 {{ project.fund }}
           </div>
         </div>
       </div>
@@ -100,8 +97,8 @@ const formValue = ref({
 })
 
 type queryResultType = ReturnType<
-    typeof useFetch<void, unknown, '/api/teacherInfo'>
-  >['data']['value'];
+  typeof useFetch<void, unknown, '/api/teacherInfo'>
+>['data']['value'];
 const queryResult = ref(null as queryResultType)
 const queryTeacher = async () => {
   const { id, startYear, endYear } = formValue.value
