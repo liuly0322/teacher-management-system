@@ -28,10 +28,10 @@ export default defineEventHandler(async (event) => {
         where: {
           project: {
             start_year: {
-              gte: Number(startYear)
+              lte: Number(endYear)
             },
             end_year: {
-              lte: Number(endYear)
+              gte: Number(startYear)
             }
           }
         },

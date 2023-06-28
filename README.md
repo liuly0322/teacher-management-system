@@ -4,7 +4,21 @@ USTC 2023 Database course Lab3.
 
 ![entity–relationship model](https://user-images.githubusercontent.com/77669094/248526333-31789e8e-cef5-4966-a87f-ddf79457fde1.png)
 
-It's created by running `pnpm create sidebase@latest`. For more information, check [sidebase merino](https://sidebase.io).
+## demo
+
+Query projects:
+
+![projects](https://user-images.githubusercontent.com/77669094/249523361-c01acb41-4fe8-400f-b62e-2f222ea5d717.png)
+
+Query classes:
+
+![teach_classes](https://user-images.githubusercontent.com/77669094/249523538-74e20213-1dbe-475f-a3be-69b8e301d33f.png)
+
+Query teachers:
+
+![teacher_info](https://user-images.githubusercontent.com/77669094/249523198-13b170a3-ec3d-43f6-9cc6-916513abcf4a.png)
+
+This project created by running `pnpm create sidebase@latest`. For more information, check [sidebase merino](https://sidebase.io).
 
 This project uses the following technologies for a great developer- and user-experience:
 
