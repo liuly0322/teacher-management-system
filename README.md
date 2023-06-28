@@ -4,7 +4,7 @@ USTC 2023 Database course Lab3.
 
 ![entity–relationship model](https://user-images.githubusercontent.com/77669094/248526333-31789e8e-cef5-4966-a87f-ddf79457fde1.png)
 
-## demo
+## Demo
 
 Query projects:
 
